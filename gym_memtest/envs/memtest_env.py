@@ -25,7 +25,7 @@ class MemTestEnv(gym.Env):
             reward = -1.0
 
         if(time < self.max_time):
-            self.state = random.randint(0,2) # 0 or 1
+            self.state = random.randint(0,1) # 0 or 1
             cell_history[time] = self.state
             self.time += 1
             done = False
@@ -35,7 +35,7 @@ class MemTestEnv(gym.Env):
         return np.array(self.state), reward, done, {}
 
     def reset(self):
-        self.state = random.randint(0,2)
+        self.state = random.randint(0,1)
         self.time = 0
         return np.array(self.state)
  
