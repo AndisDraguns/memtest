@@ -3,8 +3,8 @@ from gym import error, spaces, utils
 from gym.utils import seeding
 import random
 import numpy as np
- 
-class BubbleShooterEnv(gym.Env):  
+
+class MemTestEnv(gym.Env):  
     metadata = {'render.modes': ['human']}   
     def __init__(self):
         self.time = 0
