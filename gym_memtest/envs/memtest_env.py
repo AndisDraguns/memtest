@@ -10,7 +10,7 @@ class MemTestEnv(gym.Env):
         self.time = 0
         self.max_time = 100
         self.cell_history = [-1]*self.max_time
-        self.offset = 1 # how many back should be guessed
+        self.offset = 2 # how many back should be guessed
 
         self.state = None
         self.action_space = 2
@@ -32,7 +32,7 @@ class MemTestEnv(gym.Env):
         if(time < max_time):
             self.time += 1
             self.state = random.randint(0,1) # 0 or 1
-            cell_history[time] = self.state
+            self.cell_history[time] = self.state
             done = False
         else:
             done = True
