@@ -4,30 +4,35 @@ from gym.utils import seeding
 import random
 import numpy as np
 
-class MemTestEnv(gym.Env):  
-    metadata = {'render.modes': ['human']}   
+class MemTestEnv(gym.Env):
+    metadata = {'render.modes': ['human']}
     def __init__(self):
         self.time = 0
         self.max_time = 100
         self.cell_history = [-1]*self.max_time
+        self.offset = 1 # how many back should be guessed
 
         self.state = None
         self.action_space = 2
         self.observation_space = 1
- 
+
     def step(self, action):
         time = self.time
         cell_history = self.cell_history
+        offset = self.offset
+        max_time = self.max_time
 
-        if(cell_history[time - 1] == action): # last action guessed
+        if(time < offset):
+            reward = 0.0
+        elif(cell_history[time - offset] == action): # last action guessed
             reward = 1.0
         else:
             reward = -1.0
 
-        if(time < self.max_time):
+        if(time < max_time):
+            self.time += 1
             self.state = random.randint(0,1) # 0 or 1
             cell_history[time] = self.state
-            self.time += 1
             done = False
         else:
             done = True
@@ -35,8 +40,9 @@ class MemTestEnv(gym.Env):
         return np.array(self.state), reward, done, {}
 
     def reset(self):
-        self.state = random.randint(0,1)
         self.time = 0
+        self.state = random.randint(0,1)
+        self.cell_history[0] = self.state
         return np.array(self.state)
  
     def render(self, mode='human', close=False):
