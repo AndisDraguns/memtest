@@ -37,7 +37,7 @@ class MemTestEnv(gym.Env):
 
         if(time < max_time + (offset-1)): # if time has not run out (including warmup)
             self.time += 1
-            self.state = self.np_random.randint(low=0, high=self.n_acts+1) # roll a dice
+            self.state = self.np_random.randint(low=0, high=self.n_acts) # roll a dice
             self.cell_history[time] = self.state
             done = False
         else:
@@ -47,7 +47,7 @@ class MemTestEnv(gym.Env):
 
     def reset(self):
         self.time = 0
-        self.state = self.np_random.randint(low=0, high=self.n_acts+1) # roll a dice
+        self.state = self.np_random.randint(low=0, high=self.n_acts) # roll a dice
         self.cell_history[0] = self.state
         return np.full(shape=self.observation_dim, fill_value=self.state)
  
