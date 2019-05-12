@@ -1,1 +1,1 @@
-# memtest
+# memtest for non-continuous action/memory spaces
