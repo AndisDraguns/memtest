@@ -40,7 +40,7 @@ class MemTestContinuousEnv(gym.Env):
 
         if(time < offset): # if too early for guessing (still in warmup)
             reward = self.neutral_reward
-        else: reward = abs(cell_history[time - offset] - action)
+        else: reward = 1.0 - abs(cell_history[time - offset] - action)
 
         if(time < max_time + (offset-1)): # if time has not run out (including warmup)
             self.time += 1
