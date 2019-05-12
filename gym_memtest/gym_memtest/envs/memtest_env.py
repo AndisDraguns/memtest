@@ -64,4 +64,3 @@ class MemTestEnv(gym.Env):
         if max_time != None:
             self.max_time = max_time
         self.cell_history = [-1.0]*(self.max_time+(self.offset-1)) # including warmup
-    return True

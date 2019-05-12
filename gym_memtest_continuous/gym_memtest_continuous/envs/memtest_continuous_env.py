@@ -82,4 +82,3 @@ class MemTestContinuousEnv(gym.Env):
             shape=(1,), dtype=np.float32)
         self.observation_space = spaces.Box(low=self.low_state_array,
             high=high_state_array, dtype=np.float32)
-    return True
