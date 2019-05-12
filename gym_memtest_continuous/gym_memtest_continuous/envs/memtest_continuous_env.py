@@ -27,7 +27,7 @@ class MemTestContinuousEnv(gym.Env):
         self.action_space = spaces.Box(low=self.min_state, high=self.max_state,
             shape=(1,), dtype=np.float32)
         self.observation_space = spaces.Box(low=self.low_state_array,
-            high=high_state_array, dtype=np.float32)
+            high=self.high_state_array, dtype=np.float32)
         self.viewer = None
 
         self.seed()
@@ -81,4 +81,4 @@ class MemTestContinuousEnv(gym.Env):
         self.action_space = spaces.Box(low=self.min_state, high=self.max_state,
             shape=(1,), dtype=np.float32)
         self.observation_space = spaces.Box(low=self.low_state_array,
-            high=high_state_array, dtype=np.float32)
+            high=self.high_state_array, dtype=np.float32)
