@@ -1,1 +1,1 @@
-# memtest for non-continuous action/memory spaces
+# memtest for non-continuous action/memory spaces. The task is to remember and add random dice rolls.
