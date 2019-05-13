@@ -23,7 +23,6 @@ class MemTestAdderEnv(gym.Env):
     def step(self, action):
         time = self.time
         cell_history = self.cell_history
-        offset = self.offset
         max_time = self.max_time
 
         if(sum(cell_history) == action): # if guessed correctly
