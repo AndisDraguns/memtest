@@ -47,6 +47,7 @@ class MemTestEnv(gym.Env):
 
     def reset(self):
         self.time = 0
+        self.cell_history = [-1]*(self.max_time+(self.offset-1))
         self.state = self.np_random.randint(low=0, high=self.n_acts) # roll a dice
         self.cell_history[0] = self.state
         return np.full(shape=self.observation_dim, fill_value=self.state)

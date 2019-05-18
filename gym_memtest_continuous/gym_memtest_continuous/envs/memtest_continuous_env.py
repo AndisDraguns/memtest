@@ -54,6 +54,7 @@ class MemTestContinuousEnv(gym.Env):
 
     def reset(self):
         self.time = 0
+        self.cell_history = [-1.0]*(self.max_time+(self.offset-1)) # including warmup
         self.state = self.np_random.uniform(low=self.min_state, high=self.max_state) # roll a dice
         self.cell_history[0] = self.state
         return np.full(shape=self.observation_dim, fill_value=self.state)
