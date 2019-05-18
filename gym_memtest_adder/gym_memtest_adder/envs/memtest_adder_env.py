@@ -9,31 +9,28 @@ class MemTestAdderEnv(gym.Env):
     def __init__(self):
         self.time = 0
         self.max_time = 100 # maximum amount of guesses (excluding warmup)
-        self.cell_history = [0]*self.max_time # including warmup
+        # self.cell_history = [0]*self.max_time # including warmup
+        self.summed = 0
 
         self.negative_reward = 0.0
         self.positive_reward = 1.0
 
         self.state = None # state represents the current roll of the dice
-        self.n_acts = self.max_time # how many sides the dice has
+        self.n_acts = self.max_time+1 # how many sides the dice has
         self.action_dim = 1 # how many dice there are
         self.observation_dim = 2 # for compatibility can tile state for observation
         self.seed()
 
     def step(self, action):
-        time = self.time
-        cell_history = self.cell_history
-        max_time = self.max_time
-
-        if(sum(cell_history) == action): # if guessed correctly
+        if(self.summed == action): # if guessed correctly
             reward = self.positive_reward
         else: # if guessed incorrectly
             reward = self.negative_reward
 
-        if(time < max_time): # if time has not run out (including warmup)
+        if(self.time < self.max_time): # if time has not run out (including warmup)
             self.time += 1
             self.state = self.np_random.randint(low=0, high=2) # roll a dice
-            self.cell_history[time] = self.state
+            self.summed += self.state
             done = False
         else:
             done = True
@@ -43,7 +40,7 @@ class MemTestAdderEnv(gym.Env):
     def reset(self):
         self.time = 0
         self.state = self.np_random.randint(low=0, high=2) # roll a dice
-        self.cell_history[0] = self.state
+        self.summed += self.state
         return np.full(shape=self.observation_dim, fill_value=self.state)
  
     def render(self, mode='human', close=False):
@@ -56,5 +53,4 @@ class MemTestAdderEnv(gym.Env):
     def reinit(self, max_time=None):
         if max_time != None:
             self.max_time = max_time
-        self.cell_history = [0]*self.max_time # including warmup
-        self.n_acts = self.max_time
+        self.n_acts = self.max_time+1
