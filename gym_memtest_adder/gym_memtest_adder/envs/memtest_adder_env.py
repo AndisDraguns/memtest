@@ -15,7 +15,7 @@ class MemTestAdderEnv(gym.Env):
         self.negative_reward = 0.0
         self.positive_reward = 1.0
 
-        self.state = None # state represents the current roll of the dice
+        self.state = 0 # state represents the current roll of the dice
         self.n_acts = self.max_time+1 # how many sides the dice has
         self.action_dim = 1 # how many dice there are
         self.observation_dim = 2 # for compatibility can tile state for observation
@@ -39,6 +39,7 @@ class MemTestAdderEnv(gym.Env):
 
     def reset(self):
         self.time = 0
+        self.summed = 0
         self.state = self.np_random.randint(low=0, high=2) # roll a dice
         self.summed += self.state
         return np.full(shape=self.observation_dim, fill_value=self.state)
