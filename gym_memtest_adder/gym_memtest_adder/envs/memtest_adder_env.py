@@ -15,7 +15,7 @@ class MemTestAdderEnv(gym.Env):
         self.positive_reward = 1.0
 
         self.state = 0 # state represents the current roll of the dice
-        self.n_acts = self.max_time # how many sides the dice has
+        self.n_acts = self.max_time+1 # +1 because "0" is an action
         self.action_dim = 1 # how many dice there are
         self.observation_dim = 2 # for compatibility can tile state for observation
         self.seed()
@@ -53,4 +53,4 @@ class MemTestAdderEnv(gym.Env):
     def reinit(self, max_time=None):
         if max_time != None:
             self.max_time = max_time
-        self.n_acts = self.max_time
+        self.n_acts = self.max_time+1
