@@ -7,16 +7,15 @@ import numpy as np
 class MemTestAdderEnv(gym.Env):
     metadata = {'render.modes': ['human']}
     def __init__(self):
-        self.time = 0
-        self.max_time = 100 # maximum amount of guesses (excluding warmup)
-        # self.cell_history = [0]*self.max_time # including warmup
+        self.time = 1
+        self.max_time = 100 # maximum amount of guesses
         self.summed = 0
 
         self.negative_reward = 0.0
         self.positive_reward = 1.0
 
         self.state = 0 # state represents the current roll of the dice
-        self.n_acts = self.max_time+1 # how many sides the dice has
+        self.n_acts = self.max_time # how many sides the dice has
         self.action_dim = 1 # how many dice there are
         self.observation_dim = 2 # for compatibility can tile state for observation
         self.seed()
@@ -27,7 +26,7 @@ class MemTestAdderEnv(gym.Env):
         else: # if guessed incorrectly
             reward = self.negative_reward
 
-        if(self.time < self.max_time): # if time has not run out (including warmup)
+        if(self.time < self.max_time): # if time has not run out
             self.time += 1
             self.state = self.np_random.randint(low=0, high=2) # roll a dice
             self.summed += self.state
@@ -38,7 +37,7 @@ class MemTestAdderEnv(gym.Env):
         return np.full(shape=self.observation_dim, fill_value=self.state), reward, done, {}
 
     def reset(self):
-        self.time = 0
+        self.time = 1
         self.summed = 0
         self.state = self.np_random.randint(low=0, high=2) # roll a dice
         self.summed += self.state
@@ -54,4 +53,4 @@ class MemTestAdderEnv(gym.Env):
     def reinit(self, max_time=None):
         if max_time != None:
             self.max_time = max_time
-        self.n_acts = self.max_time+1
+        self.n_acts = self.max_time
