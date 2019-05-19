@@ -17,8 +17,6 @@ class MemTestContinuousEnv(gym.Env):
         self.max_state = 1.0 # lowest  number on the dice
 
         self.state = None # state represents the current roll of the dice
-        self.n_acts = float("Inf") # how many sides the dice has
-        self.action_dim = 1 # how many dice there are 
         self.observation_dim = 2 # for compatibility can tile state for observation
 
         # for compatibility with algorithms for MountainCarContinuous-v0:

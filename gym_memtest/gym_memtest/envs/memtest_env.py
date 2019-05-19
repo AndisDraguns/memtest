@@ -17,7 +17,7 @@ class MemTestEnv(gym.Env):
         self.positive_reward = 1.0
 
         self.state = None # state represents the current roll of the dice
-        self.n_acts = 2 # how many sides the dice has
+        self.act_dim = 2 # how many sides the dice has
         self.action_dim = 1 # how many dice there are 
         self.observation_dim = 2 # for compatibility can tile state for observation
         self.seed()
@@ -37,7 +37,7 @@ class MemTestEnv(gym.Env):
 
         if(time < max_time + (offset-1)): # if time has not run out (including warmup)
             self.time += 1
-            self.state = self.np_random.randint(low=0, high=self.n_acts) # roll a dice
+            self.state = self.np_random.randint(low=0, high=self.act_dim) # roll a dice
             self.cell_history[time] = self.state
             done = False
         else:
@@ -48,7 +48,7 @@ class MemTestEnv(gym.Env):
     def reset(self):
         self.time = 0
         self.cell_history = [-1]*(self.max_time+(self.offset-1))
-        self.state = self.np_random.randint(low=0, high=self.n_acts) # roll a dice
+        self.state = self.np_random.randint(low=0, high=self.act_dim) # roll a dice
         self.cell_history[0] = self.state
         return np.full(shape=self.observation_dim, fill_value=self.state)
  
