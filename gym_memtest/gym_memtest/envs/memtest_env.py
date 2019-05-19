@@ -16,10 +16,13 @@ class MemTestEnv(gym.Env):
         self.negative_reward = 0.0
         self.positive_reward = 1.0
 
-        self.state = None # state represents the current roll of the dice
         self.act_dim = 2 # how many sides the dice has
-        self.action_dim = 1 # how many dice there are 
-        self.observation_dim = 2 # for compatibility can tile state for observation
+        self.obs_dim = 2 # for compatibility can tile state for observation
+
+        # for compatibility with algorithms for generic Gym environments:
+        self.state = None # state represents the current roll of the dice
+        self.action_space = spaces.Discrete(act_dim)
+        self.observation_space = spaces.Discrete(obs_dim)
         self.seed()
 
     def step(self, action):
@@ -43,14 +46,14 @@ class MemTestEnv(gym.Env):
         else:
             done = True
 
-        return np.full(shape=self.observation_dim, fill_value=self.state), reward, done, {}
+        return np.full(shape=self.obs_dim, fill_value=self.state), reward, done, {}
 
     def reset(self):
         self.time = 0
         self.cell_history = [-1]*(self.max_time+(self.offset-1))
         self.state = self.np_random.randint(low=0, high=self.act_dim) # roll a dice
         self.cell_history[0] = self.state
-        return np.full(shape=self.observation_dim, fill_value=self.state)
+        return np.full(shape=self.obs_dim, fill_value=self.state)
  
     def render(self, mode='human', close=False):
         pass

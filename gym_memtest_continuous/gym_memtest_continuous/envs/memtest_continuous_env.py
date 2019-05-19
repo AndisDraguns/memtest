@@ -16,18 +16,19 @@ class MemTestContinuousEnv(gym.Env):
         self.min_state = 0.0 # highest number on the dice
         self.max_state = 1.0 # lowest  number on the dice
 
-        self.state = None # state represents the current roll of the dice
-        self.observation_dim = 2 # for compatibility can tile state for observation
+        self.obs_dim = 2 # for compatibility can tile state for observation
 
         # for compatibility with algorithms for MountainCarContinuous-v0:
-        self.low_state_array  = np.array([self.min_state]*self.observation_dim)
-        self.high_state_array = np.array([self.max_state]*self.observation_dim)
+        self.low_state_array  = np.array([self.min_state]*self.obs_dim)
+        self.high_state_array = np.array([self.max_state]*self.obs_dim)
+        self.viewer = None
+
+        # for compatibility with algorithms for generic Gym environments:
+        self.state = 0.0 # state represents the current roll of the dice
         self.action_space = spaces.Box(low=self.min_state, high=self.max_state,
             shape=(1,), dtype=np.float32)
         self.observation_space = spaces.Box(low=self.low_state_array,
             high=self.high_state_array, dtype=np.float32)
-        self.viewer = None
-
         self.seed()
 
     def step(self, action):
@@ -48,14 +49,14 @@ class MemTestContinuousEnv(gym.Env):
         else:
             done = True
 
-        return np.full(shape=self.observation_dim, fill_value=self.state), reward, done, {}
+        return np.full(shape=self.obs_dim, fill_value=self.state), reward, done, {}
 
     def reset(self):
         self.time = 0
         self.cell_history = [-1.0]*(self.max_time+(self.offset-1)) # including warmup
         self.state = self.np_random.uniform(low=self.min_state, high=self.max_state) # roll a dice
         self.cell_history[0] = self.state
-        return np.full(shape=self.observation_dim, fill_value=self.state)
+        return np.full(shape=self.obs_dim, fill_value=self.state)
  
     def render(self, mode='human', close=False):
         pass
@@ -64,19 +65,19 @@ class MemTestContinuousEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def reinit(self, offset=None, max_time=None, min_state=None, max_state=None, observation_dim=None):
+    def reinit(self, offset=None, max_time=None, min_state=None, max_state=None, obs_dim=None):
         if offset != None:
             self.offset = offset
         if max_time != None:
             self.max_time = max_time
         if min_state != None:
             self.min_state = min_state
-        if observation_dim != None:
-            self.observation_dim = observation_dim
+        if obs_dim != None:
+            self.obs_dim = obs_dim
 
         self.cell_history = [-1.0]*(self.max_time+(self.offset-1)) # including warmup
-        self.low_state_array  = np.array([self.min_state]*self.observation_dim)
-        self.high_state_array = np.array([self.max_state]*self.observation_dim)
+        self.low_state_array  = np.array([self.min_state]*self.obs_dim)
+        self.high_state_array = np.array([self.max_state]*self.obs_dim)
         self.action_space = spaces.Box(low=self.min_state, high=self.max_state,
             shape=(1,), dtype=np.float32)
         self.observation_space = spaces.Box(low=self.low_state_array,
