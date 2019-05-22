@@ -14,11 +14,10 @@ class MemTestEnv(gym.Env):
     """
     OpenAI Gym type of enviromnent class.
 
-    Description:
-        At each step a coin is flipped and the agent is rewarded if it
-        guesses correctly what the result of the coin flip was two steps
-        ago. To solve this problem better than guessing at random, the
-        agent requires some form of memory.
+    At each step a coin is flipped and the agent is rewarded if it
+    guesses correctly what the result of the coin flip was two steps
+    ago. To solve this problem better than guessing at random, the
+    agent requires some form of memory.
 
     Customisability:
         By default the environment fits the simple description above,
@@ -52,10 +51,10 @@ class MemTestEnv(gym.Env):
             be - it can change the coin into a dice. This also corresponds to
             the number of actions that the agent can take - its guess can be
             any side of the dice.
-        obs_dim (int) by default it 1 - corresponding to the one boolean value
-            of the current coin flip - 0 for heads and 1 for tails. Change
-            this to some other positive integer to return an array of the
-            current result filling all cells of the array. This might be
+        obs_dim (int): by default it is 1 - corresponding to the one boolean
+            value of the current coin flip - 0 for heads and 1 for tails.
+            Change this to some other positive integer to return an array of
+            the current result filling all cells of the array. This might be
             useful for easier compatibility with algorithms working with
             observation space dimensions differring from 1.
         neutral_reward (float): is the reward that the agent receives at each
@@ -76,7 +75,8 @@ class MemTestEnv(gym.Env):
         1 - guess that coin came up tails two turns ago
     """
 
-    metadata = {'render.modes': ['human']}
+    metadata = {"render.modes": ["human"]}
+
     def __init__(self):
         """
         Initialises the class with the default variables.
@@ -93,19 +93,19 @@ class MemTestEnv(gym.Env):
         self.max_time = 100
         self.act_dim = 2
         self.obs_dim = 1
-        self.neutral_reward  = 0.0
+        self.neutral_reward = 0.0
         self.negative_reward = 0.0
         self.positive_reward = 1.0
 
         # Variables dependent on the changeable variables:
-        self.time = 0 
+        self.time = 0
         # Cell history keeps the record of all the coin flips so far
         # The sum is maximum time + steps in the warmup phase
         self.cell_history = [-1] * (self.max_time + (self.offset - 1))
 
         # For gym's "spaces.Box" definition of observation_space
         # Smallest and largest valued observation arrays
-        self.low  = np.array([0] * self.obs_dim)
+        self.low = np.array([0] * self.obs_dim)
         self.high = np.array([self.act_dim] * self.obs_dim)
 
         # For compatibility with algorithms for generic Gym environments:
@@ -118,18 +118,17 @@ class MemTestEnv(gym.Env):
         """
         Takes an action in the environment.
 
-        Description:
-            This function performs the action from the input in the
-            environment. Then it updates the inner state of the environment
-            by rolling a dice and saving it in the cell history. It returns
-            the the dice roll, the calculated reward, "done" flag, and an
-            empty dictionary that can be alternatively be used for diagnostic
-            information. 
+        This function performs the action from the input in the
+        environment. Then it updates the inner state of the environment
+        by rolling a dice and saving it in the cell history. It returns
+        the the dice roll, the calculated reward, "done" flag, and an
+        empty dictionary that can be alternatively be used for diagnostic
+        information.
 
         Input:
             action (int): the action that the agent takes in the environment
                 at the current step
-        
+
         Outputs:
             observation (int np.array): current roll of the dice repeated
                 obs_dim times
@@ -140,7 +139,6 @@ class MemTestEnv(gym.Env):
 
         time = self.time
         offset = self.offset
-        max_time = self.max_time
 
         if(time < offset):  # If too early for guessing (in warmup phase)
             reward = self.neutral_reward
@@ -150,7 +148,7 @@ class MemTestEnv(gym.Env):
             reward = self.negative_reward
 
         # If time has not run out yet (including the warmup phase):
-        if(time < max_time + (offset - 1)):
+        if(time < self.max_time + (offset - 1)):
             self.time += 1
             # Roll a dice:
             self.state = self.np_random.randint(low=0, high=self.act_dim)
@@ -167,7 +165,7 @@ class MemTestEnv(gym.Env):
         """
         Resets the environment to the starting state
 
-        Used when starting a new episode. 
+        Used when starting a new episode.
         Returns the observation from the starting state.
 
         Output:
@@ -176,13 +174,13 @@ class MemTestEnv(gym.Env):
         """
 
         self.time = 0
-        self.cell_history = [-1]*(self.max_time + (self.offset - 1))
+        self.cell_history = [-1] * (self.max_time + (self.offset - 1))
         self.state = self.np_random.randint(low=0, high=self.act_dim)
         self.cell_history[0] = self.state
         observation = np.full(shape=self.obs_dim, fill_value=self.state)
         return observation
- 
-    def render(self, mode='human', close=False):
+
+    def render(self, mode="human", close=False):
         """
         Renders a visualisation of the environment.
 
@@ -208,7 +206,7 @@ class MemTestEnv(gym.Env):
     def reinit(self, offset=None, max_time=None, act_dim=None, obs_dim=None):
         """
         Reinitialises the environmment's variables.
-        
+
         Changes variables that have other variables dependent on them.
 
         Input:
@@ -218,15 +216,42 @@ class MemTestEnv(gym.Env):
             obs_dim (int): the new observation dimension
         """
 
-        if offset != None:
+        if offset is not None:
             self.offset = offset
-        if max_time != None:
+        if max_time is not None:
             self.max_time = max_time
-        if act_dim != None:
+        if act_dim is not None:
             self.act_dim = act_dim
-        if obs_dim != None:
+        if obs_dim is not None:
             self.obs_dim = obs_dim
 
-        self.cell_history = [-1.0]*(self.max_time + (self.offset - 1))
+        self.cell_history = [-1.0] * (self.max_time + (self.offset - 1))
         self.action_space = spaces.Discrete(self.act_dim)
         self.observation_space = spaces.Discrete(self.obs_dim)
+
+
+def get_correct(self):
+    """
+    Returns the correct action if in game phase, otherwise a random action.
+
+    This is useful for expressivity testing of the neural networks. If a
+    network can not be trained to a sufficient degree on this problem,
+    it might be due to the network used not having enough model expressivity.
+    If correct answers are given to it as labels in supervised learning,
+    it can reveal problems with expressivity. Random actions are given in
+    the warmup phase to mask the gradients in the average for the warmup
+    phase in which all actions earn the same neutral reward.
+
+    Output:
+        correct_action (int): the action that would have earned positive
+            reward at the current step
+    """
+    time = self.time
+    offset = self.offset
+
+    if(time < offset):  # If too early for guessing (in warmup phase)
+        correct_action = self.np_random.randint(low=0, high=self.act_dim)
+    else:
+        correct_action = self.cell_history[time - offset]
+
+    return correct_action

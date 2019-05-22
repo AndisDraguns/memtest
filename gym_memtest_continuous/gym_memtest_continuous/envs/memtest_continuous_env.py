@@ -9,16 +9,16 @@ from gym import spaces
 from gym.utils import seeding
 import numpy as np
 
+
 class MemTestContinuousEnv(gym.Env):
     """
     OpenAI Gym type of enviromnent class.
 
-    Description:
-        At each step a random floating point number is generated.
-        The agent is rewarded in proportion to how close it guesses
-        what the result of the generation was two steps ago. To do
-        better than guessing at random, the agent requires some form
-        of memory.
+    At each step a random floating point number is generated.
+    The agent is rewarded in proportion to how close it guesses
+    what the result of the generation was two steps ago. To do
+    better than guessing at random, the agent requires some form
+    of memory.
 
     Customisability:
         By default the environment fits the simple description above,
@@ -66,7 +66,8 @@ class MemTestContinuousEnv(gym.Env):
         max: 1.0
     """
 
-    metadata = {'render.modes': ['human']}
+    metadata = {"render.modes": ["human"]}
+
     def __init__(self):
         """
         Initialises the class with the default variables.
@@ -81,7 +82,7 @@ class MemTestContinuousEnv(gym.Env):
         # Changeable variables:
         self.offset = 2
         self.max_time = 100
-        self.obs_dim = 2 
+        self.obs_dim = 2
         self.min_state = 0.0
         self.max_state = 1.0
         self.neutral_reward = 0.0
@@ -90,18 +91,20 @@ class MemTestContinuousEnv(gym.Env):
         self.time = 0
         # Cell history keeps the record of all the generations so far
         # The sum is maximum time + steps in the warmup phase
-        self.cell_history = [-1.0]*(self.max_time + (self.offset - 1))
+        self.cell_history = [-1.0] * (self.max_time + (self.offset - 1))
 
         # For compatibility with algorithms for MountainCarContinuous-v0:
-        self.low_state_array  = np.array([self.min_state] * self.obs_dim)
+        self.low_state_array = np.array([self.min_state] * self.obs_dim)
         self.high_state_array = np.array([self.max_state] * self.obs_dim)
         self.viewer = None
 
         # For compatibility with algorithms for generic Gym environments:
         self.state = 0.0  # State represents the current generation
-        self.action_space = spaces.Box(low=self.min_state,
-            high=self.max_state, shape=(1,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=self.low_state_array,
+        self.action_space = spaces.Box(
+            low=self.min_state, high=self.max_state,
+            shape=(1,), dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=self.low_state_array,
             high=self.high_state_array, dtype=np.float32)
         self.seed()
 
@@ -109,18 +112,17 @@ class MemTestContinuousEnv(gym.Env):
         """
         Takes an action in the environment.
 
-        Description:
-            This function performs the action from the input in the
-            environment. Then it updates the inner state of the environment
-            by generating a new random number and saving it in the cell
-            history. It returns the generation, the calculated reward,
-            "done" flag, and an empty dictionary that can be alternatively
-            be used for diagnostic information. 
+        This function performs the action from the input in the
+        environment. Then it updates the inner state of the environment
+        by generating a new random number and saving it in the cell
+        history. It returns the generation, the calculated reward,
+        "done" flag, and an empty dictionary that can be alternatively
+        be used for diagnostic information.
 
         Input:
             action (float): the action that the agent takes in the environment
                 at the current step
-        
+
         Outputs:
             observation (float np.array): current roll of the dice repeated
                 obs_dim times
@@ -131,20 +133,19 @@ class MemTestContinuousEnv(gym.Env):
 
         time = self.time
         offset = self.offset
-        max_time = self.max_time
 
         if(time < offset):  # If too early for guessing (in warmup phase)
             reward = self.neutral_reward
         else:
             # Rewards are higher if the guess is closer:
-            reward = 1.0 - abs(self.cell_history[time - offset] - action*1.0)
+            reward = 1.0 - abs(self.cell_history[time - offset] - action * 1.0)
 
         # If time has not run out yet (including the warmup phase):
-        if(time < max_time + (offset - 1)):
+        if(time < self.max_time + (offset - 1)):
             self.time += 1
             # Create a new generation:
-            self.state = self.np_random.uniform(low=self.min_state,
-                high=self.max_state)
+            self.state = self.np_random.uniform(
+                low=self.min_state, high=self.max_state)
             self.cell_history[time] = self.state
             done = False
         else:
@@ -158,7 +159,7 @@ class MemTestContinuousEnv(gym.Env):
         """
         Resets the environment to the starting state
 
-        Used when starting a new episode. 
+        Used when starting a new episode.
         Returns the observation from the starting state.
 
         Output:
@@ -167,14 +168,14 @@ class MemTestContinuousEnv(gym.Env):
         """
 
         self.time = 0
-        self.cell_history = [-1.0]*(self.max_time + (self.offset - 1))
-        self.state = self.np_random.uniform(low=self.min_state,
-            high=self.max_state)
+        self.cell_history = [-1.0] * (self.max_time + (self.offset - 1))
+        self.state = self.np_random.uniform(
+            low=self.min_state, high=self.max_state)
         self.cell_history[0] = self.state
         observation = np.full(shape=self.obs_dim, fill_value=self.state)
         return observation
- 
-    def render(self, mode='human', close=False):
+
+    def render(self, mode="human", close=False):
         """
         Renders a visualisation of the environment.
 
@@ -197,11 +198,12 @@ class MemTestContinuousEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def reinit(self, offset=None, max_time=None, obs_dim=None, min_state=None,
-        max_state=None):
+    def reinit(
+            self, offset=None, max_time=None,
+            obs_dim=None, min_state=None, max_state=None):
         """
         Reinitialises the environmment's variables.
-        
+
         Changes variables that have other variables dependent on them.
 
         Input:
@@ -212,21 +214,51 @@ class MemTestContinuousEnv(gym.Env):
             max_state (float): the new maximum generation
         """
 
-        if offset != None:
+        if offset is not None:
             self.offset = offset
-        if max_time != None:
+        if max_time is not None:
             self.max_time = max_time
-        if obs_dim != None:
+        if obs_dim is not None:
             self.obs_dim = obs_dim
-        if min_state != None:
+        if min_state is not None:
             self.min_state = min_state
-        if max_state != None:
+        if max_state is not None:
             self.max_state = max_state
 
-        self.cell_history = [-1.0]*(self.max_time + (self.offset - 1))
-        self.low_state_array  = np.array([self.min_state]*self.obs_dim)
-        self.high_state_array = np.array([self.max_state]*self.obs_dim)
-        self.action_space = spaces.Box(low=self.min_state,
-            high=self.max_state, shape=(1,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=self.low_state_array,
+        self.cell_history = [-1.0] * (self.max_time + (self.offset - 1))
+        self.low_state_array = np.array([self.min_state] * self.obs_dim)
+        self.high_state_array = np.array([self.max_state] * self.obs_dim)
+        self.action_space = spaces.Box(
+            low=self.min_state, high=self.max_state,
+            shape=(1,), dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=self.low_state_array,
             high=self.high_state_array, dtype=np.float32)
+
+
+def get_correct(self):
+    """
+    Returns the correct action if in game phase, otherwise a random action.
+
+    This is useful for expressivity testing of the neural networks. If a
+    network can not be trained to a sufficient degree on this problem,
+    it might be due to the network used not having enough model expressivity.
+    If correct answers are given to it as labels in supervised learning,
+    it can reveal problems with expressivity. Random actions are given in
+    the warmup phase to mask the gradients in the average for the warmup
+    phase in which all actions earn the same neutral reward.
+
+    Output:
+        correct_action (float): the action that would have earned the
+            highest reward at the current step
+    """
+    time = self.time
+    offset = self.offset
+
+    if(time < offset):  # If too early for guessing (in warmup phase)
+        correct_action = self.state = self.np_random.uniform(
+            low=self.min_state, high=self.max_state)
+    else:
+        correct_action = self.cell_history[time - offset]
+
+    return correct_action

@@ -9,15 +9,15 @@ from gym import spaces
 from gym.utils import seeding
 import numpy as np
 
+
 class MemTestAdderEnv(gym.Env):
     """
     OpenAI Gym type of enviromnent class.
 
-    Description:
-        At each step a coin is flipped and the agent is rewarded if it
-        guesses correctly what the total amount of tails so far is.
-        To solve this problem close to maximum reward, the agent requires
-        some form of memory.
+    At each step a coin is flipped and the agent is rewarded if it
+    guesses correctly what the total amount of tails so far is.
+    To solve this problem close to maximum reward, the agent requires
+    some form of memory.
 
     Changeable variables:
         This environment is customisable by changing some of its parameters.
@@ -46,7 +46,8 @@ class MemTestAdderEnv(gym.Env):
         ...
     """
 
-    metadata = {'render.modes': ['human']}
+    metadata = {"render.modes": ["human"]}
+
     def __init__(self):
         """
         Initialises the class with the default variables.
@@ -70,7 +71,7 @@ class MemTestAdderEnv(gym.Env):
         self.act_dim = self.max_time + 1  # +1 because "0" is an action
 
         # For gym's "spaces.Box" definition of observation_space:
-        self.low  = np.array([0] * self.obs_dim)
+        self.low = np.array([0] * self.obs_dim)
         self.high = np.array([self.act_dim] * self.obs_dim)
 
         # For compatibility with algorithms for generic Gym environments:
@@ -83,18 +84,17 @@ class MemTestAdderEnv(gym.Env):
         """
         Takes an action in the environment.
 
-        Description:
-            This function performs the action from the input in the
-            environment. Then it updates the inner state of the environment
-            by generating a new random number and adding it to the sum.
-            It returns the current coin flip, the calculated reward,
-            "done" flag, and an empty dictionary that can be alternatively
-            be used for diagnostic information. 
+        This function performs the action from the input in the
+        environment. Then it updates the inner state of the environment
+        by generating a new random number and adding it to the sum.
+        It returns the current coin flip, the calculated reward,
+        "done" flag, and an empty dictionary that can be alternatively
+        be used for diagnostic information.
 
         Input:
             action (int): the action that the agent takes in the environment
                 at the current step
-        
+
         Outputs:
             observation (int np.array): current flip of the coin repeated
                 obs_dim times
@@ -125,7 +125,7 @@ class MemTestAdderEnv(gym.Env):
         """
         Resets the environment to the starting state
 
-        Used when starting a new episode. 
+        Used when starting a new episode.
         Returns the observation from the starting state.
 
         Output:
@@ -139,8 +139,8 @@ class MemTestAdderEnv(gym.Env):
         self.summed += self.state
         observation = np.full(shape=self.obs_dim, fill_value=self.state)
         return observation
- 
-    def render(self, mode='human', close=False):
+
+    def render(self, mode="human", close=False):
         """
         Renders a visualisation of the environment.
 
@@ -166,7 +166,7 @@ class MemTestAdderEnv(gym.Env):
     def reinit(self, max_time=None, obs_dim=None):
         """
         Reinitialises the environmment's variables.
-        
+
         Changes variables that have other variables dependent on them.
 
         Input:
@@ -174,13 +174,31 @@ class MemTestAdderEnv(gym.Env):
             obs_dim (int): the new observation dimension
         """
 
-        if max_time != None:
+        if max_time is not None:
             self.max_time = max_time
-        if obs_dim != None:
+        if obs_dim is not None:
             self.obs_dim = obs_dim
 
         self.act_dim = self.max_time + 1
-        self.low  = np.array([0]*self.obs_dim)
-        self.high = np.array([self.act_dim]*self.obs_dim)
+        self.low = np.array([0] * self.obs_dim)
+        self.high = np.array([self.act_dim] * self.obs_dim)
         self.action_space = spaces.Discrete(self.act_dim)
         self.observation_space = spaces.Box(self.low, self.high, dtype=int)
+
+
+def get_correct(self):
+    """
+    Returns the correct action at the current step.
+
+    This is useful for expressivity testing of the neural networks. If a
+    network can not be trained to a sufficient degree on this problem,
+    it might be due to the network used not having enough model expressivity.
+    If correct answers are given to it as labels in supervised learning,
+    it can reveal problems with expressivity.
+
+    Output:
+        correct_action (int): the action that would have earned positive
+            reward at the current step
+    """
+    correct_action = self.summed
+    return correct_action
