@@ -235,30 +235,30 @@ class MemTestContinuousEnv(gym.Env):
             low=self.low_state_array,
             high=self.high_state_array, dtype=np.float32)
 
+    def get_correct(self):
+        """
+        Returns the correct action if in game phase, otherwise a random action.
 
-def get_correct(self):
-    """
-    Returns the correct action if in game phase, otherwise a random action.
+        This is useful for expressivity testing of the neural networks. If a
+        network can not be trained to a sufficient degree on this problem,
+        it might be due to the network used not having enough model
+        expressivity. If correct answers are given to it as labels in
+        supervised learning, it can reveal problems with expressivity.
+        Random actions are given in the warmup phase to mask the gradients
+        in the average for the warmup phase in which all actions earn the
+        same neutral reward.
 
-    This is useful for expressivity testing of the neural networks. If a
-    network can not be trained to a sufficient degree on this problem,
-    it might be due to the network used not having enough model expressivity.
-    If correct answers are given to it as labels in supervised learning,
-    it can reveal problems with expressivity. Random actions are given in
-    the warmup phase to mask the gradients in the average for the warmup
-    phase in which all actions earn the same neutral reward.
+        Output:
+            correct_action (float): the action that would have earned the
+                highest reward at the current step
+        """
+        time = self.time
+        offset = self.offset
 
-    Output:
-        correct_action (float): the action that would have earned the
-            highest reward at the current step
-    """
-    time = self.time
-    offset = self.offset
+        if(time < offset):  # If too early for guessing (in warmup phase)
+            correct_action = self.state = self.np_random.uniform(
+                low=self.min_state, high=self.max_state)
+        else:
+            correct_action = self.cell_history[time - offset]
 
-    if(time < offset):  # If too early for guessing (in warmup phase)
-        correct_action = self.state = self.np_random.uniform(
-            low=self.min_state, high=self.max_state)
-    else:
-        correct_action = self.cell_history[time - offset]
-
-    return correct_action
+        return correct_action

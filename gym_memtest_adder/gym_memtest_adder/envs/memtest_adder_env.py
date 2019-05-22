@@ -185,20 +185,19 @@ class MemTestAdderEnv(gym.Env):
         self.action_space = spaces.Discrete(self.act_dim)
         self.observation_space = spaces.Box(self.low, self.high, dtype=int)
 
+    def get_correct(self):
+        """
+        Returns the correct action at the current step.
 
-def get_correct(self):
-    """
-    Returns the correct action at the current step.
+        This is useful for expressivity testing of the neural networks. If a
+        network can not be trained to a sufficient degree on this problem,
+        it might be due to the network used not having enough model
+        expressivity. If correct answers are given to it as labels in
+        supervised learning, it can reveal problems with expressivity.
 
-    This is useful for expressivity testing of the neural networks. If a
-    network can not be trained to a sufficient degree on this problem,
-    it might be due to the network used not having enough model expressivity.
-    If correct answers are given to it as labels in supervised learning,
-    it can reveal problems with expressivity.
-
-    Output:
-        correct_action (int): the action that would have earned positive
-            reward at the current step
-    """
-    correct_action = self.summed
-    return correct_action
+        Output:
+            correct_action (int): the action that would have earned positive
+                reward at the current step
+        """
+        correct_action = self.summed
+        return correct_action
