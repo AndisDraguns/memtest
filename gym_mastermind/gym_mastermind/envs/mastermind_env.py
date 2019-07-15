@@ -123,13 +123,12 @@ class MastermindEnv(gym.Env):
             if guess[i] == self.pattern[i] and to_check[i] == 1:
                 black_pegs += 1
                 to_check[i] = 0
-                break
-
-            for j in range(self.n_pegs):
-                if guess[i] == self.pattern[j] and to_check[j] == 1:
-                    white_pegs += 1
-                    to_check[j] = 0
-                    break
+            else:
+                for j in range(self.n_pegs):
+                    if guess[i] == self.pattern[j] and to_check[j] == 1:
+                        white_pegs += 1
+                        to_check[j] = 0
+                        break
 
         if black_pegs == self.n_pegs:
             done = True
