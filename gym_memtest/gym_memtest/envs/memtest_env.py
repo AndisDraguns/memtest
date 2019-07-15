@@ -46,7 +46,8 @@ class MemTestEnv(gym.Env):
         max_time (int): controls how many guesses there can be, excluding the
             warmup phase. For example, if set to 100, the sum of the rewards
             in an episode corresponds to the percent of correct guesses in
-            the game phase.
+            the game phase if act_dim and the reward amounts have the default
+            values.
         act_dim (int): controls how many outcomes of the dice roll can there
             be - it can change the coin into a dice. This also corresponds to
             the number of actions that the agent can take - its guess can be
