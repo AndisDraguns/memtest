@@ -67,11 +67,11 @@ class MastermindEnv(gym.Env):
         self.max_guesses = 12
         self.n_colours = 6  # Change via reinit() method
         self.n_pegs = 4  # Change via reinit() method
-        self.white_reward = 1.0
-        self.black_reward = 2.0
+        self.white_reward = 0.0
+        self.black_reward = 0.0
         self.win_reward = 10.0
 
-        self.act_dim = self.n_colours * self.n_pegs
+        self.act_dim = self.n_colours ** self.n_pegs
         self.obs_dim = 2  # The two counters for key pegs
         self.time = 0
 
@@ -133,7 +133,7 @@ class MastermindEnv(gym.Env):
         if black_pegs == self.n_pegs:
             done = True
             reward += self.win_reward
-        elif self.time >= self.max_guesses:
+        elif self.time > self.max_guesses:
             done = True
         else:
             done = False
